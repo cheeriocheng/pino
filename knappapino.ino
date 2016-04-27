@@ -12,7 +12,7 @@
 #define PIN 1
 
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(9, PIN);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(59, PIN);
 
 uint8_t  mode   = 0, // Current animation effect
          offset = 0; // Position of spinny eyes
@@ -44,10 +44,48 @@ void loop() {
   }
   
 
-   for (int i = 0; i <29; i++) {
+   for (int i = 0; i <59; i++) {
       pixels.setPixelColor(i, color);
    }
    
    pixels.show();
+}
+
+void rainbow(uint8_t wait) {
+  uint16_t i, j;
+
+  for (j = 0; j < 256; j++) {
+    for (i = 0; i < pixels.numPixels(); i++) {
+      pixels.setPixelColor(i, Wheel((i + j) & 255));
+    }
+    pixels.show();
+    delay(wait);
+  }
+}
+
+void rainbowByStep(float rStep){
+
+  int j = (int)rStep %256;
+  for (int i = 0; i < pixels.numPixels(); i++) {
+    pixels.setPixelColor(i, Wheel((i + j) & 255));
+  }
+  pixels.show();
+}
+
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  WheelPos = 255 - WheelPos;
+  if (WheelPos < 85) {
+    return pixels.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  } 
+  else if (WheelPos < 170) {
+    WheelPos -= 85;
+    return pixels.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  } 
+  else {
+    WheelPos -= 170;
+    return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+  }
 }
 
