@@ -16,11 +16,14 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(59, PIN);
 
 uint8_t  mode   = 0, // Current animation effect
          offset = 0; // Position of spinny eyes
-uint32_t color  = 0xFF0000; // Start red
+//uint32_t color  = 0xFF0000; // Start red
 uint32_t prevTime;
 
 //bounce switch
 const int switchPin = 2 ;
+
+//COLOR
+float rainbowStep = 0;
 
 void setup() {
 #ifdef __AVR_ATtiny85__ // Trinket, Gemma, etc.
@@ -39,14 +42,24 @@ void loop() {
 
   int buttonState = digitalRead(switchPin);
   if (buttonState == HIGH) {
-    color >>= 8;                 // Next color R->G->B
-    if (!color) color = 0xFF0000; // Reset to red
+    //color >>= 8;                 // Next color R->G->B
+    rainbowStep += 5; 
+
+    //if (!color) color = 0xFF0000; // Reset to red
+  } else {
+    rainbowStep += 0.05;  //the integer increament every 5 cycles..
+    
   }
   
+    if (rainbowStep >255 ){
+      rainbowStep = 0 ;
+    }
 
-   for (int i = 0; i <59; i++) {
-      pixels.setPixelColor(i, color);
-   }
+    rainbowByStep(rainbowStep);
+    
+   //for (int i = 0; i <59; i++) {
+   //   pixels.setPixelColor(i, color);
+   //}
    
    pixels.show();
 }
@@ -71,6 +84,7 @@ void rainbowByStep(float rStep){
   }
   pixels.show();
 }
+
 
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
